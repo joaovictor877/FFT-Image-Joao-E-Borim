@@ -1,0 +1,13 @@
+{
+  "name": "fft-decoder-jucaebora",
+  "version": "1.0.0",
+  "private": true,
+  "description": "FFT image cipher single-page app for Azure App Service",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}
