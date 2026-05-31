@@ -72,9 +72,34 @@
 
     .tabs {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
+      grid-template-columns: repeat(2, 1fr);
       border-bottom: 1px solid var(--line);
       background: #11151b;
+    }
+
+    .how-it-works {
+      margin: 12px 16px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: #10161d;
+      padding: 12px;
+    }
+
+    .how-title {
+      margin: 0 0 8px;
+      color: var(--accent);
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .steps {
+      margin: 0;
+      padding-left: 18px;
+      display: grid;
+      gap: 6px;
+      color: var(--text-soft);
+      font-size: 0.84rem;
     }
 
     .tab-btn {
@@ -270,62 +295,6 @@
       display: block;
     }
 
-    .wide-chart {
-      margin-top: 12px;
-      border: 1px solid var(--line);
-      background: #0f141a;
-      border-radius: 10px;
-      padding: 10px;
-    }
-
-    .wide-chart canvas {
-      width: 100%;
-      height: 210px;
-      display: block;
-      border: 1px solid #303846;
-      border-radius: 8px;
-      background: #090d11;
-      image-rendering: pixelated;
-    }
-
-    .warning {
-      margin-top: 10px;
-      color: var(--err);
-      font-size: 0.84rem;
-      display: none;
-      border: 1px solid rgba(255, 85, 85, 0.35);
-      background: rgba(255, 85, 85, 0.08);
-      padding: 8px 10px;
-      border-radius: 8px;
-    }
-
-    .metrics {
-      margin-top: 12px;
-      display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 8px;
-    }
-
-    .metric {
-      border: 1px solid var(--line);
-      border-radius: 8px;
-      background: #10151b;
-      padding: 10px;
-    }
-
-    .metric-label {
-      color: var(--text-soft);
-      font-size: 0.76rem;
-      text-transform: uppercase;
-      margin-bottom: 4px;
-    }
-
-    .metric-value {
-      font-size: 0.95rem;
-      color: var(--text);
-      word-break: break-word;
-    }
-
     .note {
       margin-top: 10px;
       color: var(--text-soft);
@@ -337,8 +306,7 @@
         grid-template-columns: repeat(2, minmax(120px, 1fr));
       }
 
-      .canvas-grid,
-      .metrics {
+      .canvas-grid {
         grid-template-columns: 1fr;
       }
     }
@@ -364,15 +332,24 @@
   <div class="app">
     <header class="topbar">
       <div>
-        <h1 class="title">FFT 2D Image Cipher Lab</h1>
-        <p class="subtitle">Encriptação e decodificação por domínio de frequência com estado lossless em memória</p>
+        <h1 class="title">Codificador de Imagem com FFT 2D</h1>
+        <p class="subtitle">Programa simples para codificar e reconstruir imagem usando frequência</p>
       </div>
     </header>
 
+    <section class="how-it-works">
+      <h2 class="how-title">Como funciona (resumo)</h2>
+      <ol class="steps">
+        <li>Carrega a imagem e redimensiona para 128x128.</li>
+        <li>Aplica FFT 2D para ir ao domínio da frequência.</li>
+        <li>Aplica uma cifra fixa e reversível nos coeficientes.</li>
+        <li>Aplica IFFT para reconstruir a imagem.</li>
+      </ol>
+    </section>
+
     <nav class="tabs">
-      <button class="tab-btn active" data-tab="encrypt">Encriptar</button>
-      <button class="tab-btn" data-tab="decode">Decodificar</button>
-      <button class="tab-btn" data-tab="analyze">Analisar</button>
+      <button class="tab-btn active" data-tab="encrypt">Codificar</button>
+      <button class="tab-btn" data-tab="decode">Reconstruir</button>
     </nav>
 
     <section class="panel active" data-panel="encrypt">
@@ -383,35 +360,20 @@
         </div>
 
         <div class="field">
-          <label for="encMode">Modo</label>
-          <select id="encMode">
-            <option value="phase">phase</option>
-            <option value="scramble">scramble</option>
-            <option value="shift">shift</option>
-            <option value="negate">negate</option>
-          </select>
-        </div>
-
-        <div class="field">
-          <label for="encSeed">Chave (seed)</label>
-          <input id="encSeed" type="number" value="1234" />
-        </div>
-
-        <div class="field">
           <label>Ação</label>
-          <button id="encRunBtn">Encriptar via FFT</button>
+          <button id="encRunBtn">Codificar imagem</button>
         </div>
       </div>
 
       <div class="row-buttons">
-        <button id="encDownloadBtn" disabled>Baixar encriptada (PNG)</button>
+        <button id="encDownloadBtn" disabled>Baixar codificada (PNG)</button>
         <button id="encExportJsonBtn" disabled>Exportar coeficientes (.json)</button>
-        <button id="goDecodeBtn" disabled>Decodificar agora</button>
+        <button id="goDecodeBtn" disabled>Reconstruir agora</button>
       </div>
 
       <div id="encStatus" class="status" data-state="idle">
         <span class="dot"></span>
-        <span class="status-text">Aguardando imagem para encriptação.</span>
+        <span class="status-text">Aguardando imagem para codificação.</span>
       </div>
 
       <div class="canvas-grid">
@@ -420,14 +382,9 @@
           <canvas id="encOriginalCanvas" class="pixel" width="128" height="128"></canvas>
         </div>
         <div class="canvas-card">
-          <div class="canvas-title">Encriptada (preview IFFT)</div>
+          <div class="canvas-title">Codificada (preview IFFT)</div>
           <canvas id="encPreviewCanvas" class="pixel" width="128" height="128"></canvas>
         </div>
-      </div>
-
-      <div class="wide-chart">
-        <div class="canvas-title">Espectro por bandas radiais (magnitude log)</div>
-        <canvas id="encBandsCanvas" width="1024" height="220"></canvas>
       </div>
 
       <p class="note">Processamento sempre em 128x128 e N ajustado para a próxima potência de 2.</p>
@@ -441,28 +398,13 @@
         </div>
 
         <div class="field">
-          <label for="decFile">Imagem encriptada (fallback PNG)</label>
+          <label for="decFile">Imagem codificada (fallback PNG)</label>
           <input id="decFile" type="file" accept="image/png,image/jpeg,image/jpg" />
         </div>
 
         <div class="field">
-          <label for="decMode">Modo</label>
-          <select id="decMode">
-            <option value="phase">phase</option>
-            <option value="scramble">scramble</option>
-            <option value="shift">shift</option>
-            <option value="negate">negate</option>
-          </select>
-        </div>
-
-        <div class="field">
-          <label for="decSeed">Chave (seed)</label>
-          <input id="decSeed" type="number" value="1234" />
-        </div>
-
-        <div class="field">
           <label>Ação</label>
-          <button id="decRunBtn">Decodificar via IFFT</button>
+          <button id="decRunBtn">Reconstruir via IFFT</button>
         </div>
       </div>
 
@@ -477,80 +419,18 @@
 
       <div id="decStatus" class="status" data-state="idle">
         <span class="dot"></span>
-        <span class="status-text">Pronto para decodificação.</span>
+        <span class="status-text">Pronto para reconstrução.</span>
       </div>
-
-      <div id="decMismatchWarning" class="warning"></div>
 
       <div class="canvas-grid">
         <div class="canvas-card">
-          <div class="canvas-title">Encriptada</div>
+          <div class="canvas-title">Codificada</div>
           <canvas id="decEncryptedCanvas" class="pixel" width="128" height="128"></canvas>
         </div>
         <div class="canvas-card">
-          <div class="canvas-title">Decodificada</div>
+          <div class="canvas-title">Reconstruída</div>
           <canvas id="decOutputCanvas" class="pixel" width="128" height="128"></canvas>
         </div>
-      </div>
-    </section>
-
-    <section class="panel" data-panel="analyze">
-      <div class="controls">
-        <div class="field">
-          <label for="anaFile">Imagem para análise</label>
-          <input id="anaFile" type="file" accept="image/png,image/jpeg,image/jpg" />
-        </div>
-
-        <div class="field">
-          <label>Resolução FFT</label>
-          <input id="anaSize" type="text" value="128 x 128" disabled />
-        </div>
-
-        <div class="field">
-          <label>Bandas radiais</label>
-          <input id="anaBands" type="number" value="8" min="2" max="64" step="1" />
-        </div>
-
-        <div class="field">
-          <label>Ação</label>
-          <button id="anaRunBtn">Analisar FFT</button>
-        </div>
-      </div>
-
-      <div id="anaStatus" class="status" data-state="idle">
-        <span class="dot"></span>
-        <span class="status-text">Carregue uma imagem para analisar.</span>
-      </div>
-
-      <div class="canvas-grid">
-        <div class="canvas-card">
-          <div class="canvas-title">Original (redimensionada)</div>
-          <canvas id="anaOriginalCanvas" class="pixel" width="128" height="128"></canvas>
-        </div>
-        <div class="canvas-card">
-          <div class="canvas-title">Espectro FFT 2D (log + fftshift)</div>
-          <canvas id="anaSpectrumCanvas" class="pixel" width="128" height="128"></canvas>
-        </div>
-      </div>
-
-      <div class="metrics">
-        <div class="metric">
-          <div class="metric-label">Componente DC</div>
-          <div id="metricDc" class="metric-value">-</div>
-        </div>
-        <div class="metric">
-          <div class="metric-label">Frequência de pico</div>
-          <div id="metricPeak" class="metric-value">-</div>
-        </div>
-        <div class="metric">
-          <div class="metric-label">Entropia espectral</div>
-          <div id="metricEntropy" class="metric-value">-</div>
-        </div>
-      </div>
-
-      <div class="wide-chart">
-        <div class="canvas-title">Energia por banda radial (definida pelo usuario)</div>
-        <canvas id="anaBandsCanvas" width="1024" height="220"></canvas>
       </div>
     </section>
   </div>
@@ -560,13 +440,10 @@
 
     const TARGET_SIZE = 128;
     const FFT_N = nextPow2(TARGET_SIZE);
-    const RADIAL_BANDS = 8;
-
     const state = {
       encRgb: null,
       encState: null,
-      decRgbFallback: null,
-      anaGray: null
+      decRgbFallback: null
     };
 
     const refs = {
@@ -574,8 +451,6 @@
       panels: Array.from(document.querySelectorAll(".panel")),
 
       encFile: document.getElementById("encFile"),
-      encMode: document.getElementById("encMode"),
-      encSeed: document.getElementById("encSeed"),
       encRunBtn: document.getElementById("encRunBtn"),
       encDownloadBtn: document.getElementById("encDownloadBtn"),
       encExportJsonBtn: document.getElementById("encExportJsonBtn"),
@@ -583,30 +458,15 @@
       encStatus: document.getElementById("encStatus"),
       encOriginalCanvas: document.getElementById("encOriginalCanvas"),
       encPreviewCanvas: document.getElementById("encPreviewCanvas"),
-      encBandsCanvas: document.getElementById("encBandsCanvas"),
 
       decJsonFile: document.getElementById("decJsonFile"),
       decFile: document.getElementById("decFile"),
-      decMode: document.getElementById("decMode"),
-      decSeed: document.getElementById("decSeed"),
       decRunBtn: document.getElementById("decRunBtn"),
       decDownloadBtn: document.getElementById("decDownloadBtn"),
       decStatus: document.getElementById("decStatus"),
       decMemoryStatus: document.getElementById("decMemoryStatus"),
-      decMismatchWarning: document.getElementById("decMismatchWarning"),
       decEncryptedCanvas: document.getElementById("decEncryptedCanvas"),
-      decOutputCanvas: document.getElementById("decOutputCanvas"),
-
-      anaFile: document.getElementById("anaFile"),
-      anaRunBtn: document.getElementById("anaRunBtn"),
-      anaBands: document.getElementById("anaBands"),
-      anaStatus: document.getElementById("anaStatus"),
-      anaOriginalCanvas: document.getElementById("anaOriginalCanvas"),
-      anaSpectrumCanvas: document.getElementById("anaSpectrumCanvas"),
-      metricDc: document.getElementById("metricDc"),
-      metricPeak: document.getElementById("metricPeak"),
-      metricEntropy: document.getElementById("metricEntropy"),
-      anaBandsCanvas: document.getElementById("anaBandsCanvas")
+      decOutputCanvas: document.getElementById("decOutputCanvas")
     };
 
     init();
@@ -616,10 +476,6 @@
       clearCanvas(refs.encPreviewCanvas);
       clearCanvas(refs.decEncryptedCanvas);
       clearCanvas(refs.decOutputCanvas);
-      clearCanvas(refs.anaOriginalCanvas);
-      clearCanvas(refs.anaSpectrumCanvas);
-      drawBandBars(refs.encBandsCanvas, new Float64Array(RADIAL_BANDS), "B");
-      drawBandBars(refs.anaBandsCanvas, new Float64Array(getAnalysisBandCount()), "B");
 
       refs.tabs.forEach((btn) => {
         btn.addEventListener("click", () => activateTab(btn.dataset.tab));
@@ -631,7 +487,7 @@
           return;
         }
 
-        setStatus(refs.encStatus, "working", "Carregando imagem para encriptação...");
+        setStatus(refs.encStatus, "working", "Carregando imagem para codificação...");
         try {
           const loaded = await loadFileToCanvas(file, refs.encOriginalCanvas, FFT_N);
           state.encRgb = loaded.rgb;
@@ -639,7 +495,7 @@
           refs.encDownloadBtn.disabled = true;
           refs.goDecodeBtn.disabled = true;
           updateDecodeMemoryStatus();
-          setStatus(refs.encStatus, "ok", "Imagem pronta. Clique em Encriptar via FFT.");
+          setStatus(refs.encStatus, "ok", "Imagem pronta. Clique em Codificar imagem.");
         } catch (err) {
           setStatus(refs.encStatus, "error", "Falha ao carregar imagem: " + err.message);
         }
@@ -651,38 +507,21 @@
           return;
         }
 
-        // Mantem apenas um tipo de upload por vez na aba de decodificacao.
+        // Mantem apenas um tipo de upload por vez na aba de reconstrucao.
         refs.decJsonFile.value = "";
 
-        setStatus(refs.decStatus, "working", "Carregando fallback de imagem encriptada...");
+        setStatus(refs.decStatus, "working", "Carregando fallback de imagem codificada...");
         try {
           const loaded = await loadFileToCanvas(file, refs.decEncryptedCanvas, FFT_N);
           state.decRgbFallback = loaded.rgb;
-          setStatus(refs.decStatus, "ok", "Imagem fallback carregada para decodificação.");
+          setStatus(refs.decStatus, "ok", "Imagem fallback carregada para reconstrução.");
         } catch (err) {
           setStatus(refs.decStatus, "error", "Falha ao carregar imagem fallback: " + err.message);
         }
       });
 
-      refs.anaFile.addEventListener("change", async (ev) => {
-        const file = ev.target.files && ev.target.files[0];
-        if (!file) {
-          return;
-        }
-
-        setStatus(refs.anaStatus, "working", "Carregando imagem para análise...");
-        try {
-          const loaded = await loadFileToCanvas(file, refs.anaOriginalCanvas, FFT_N);
-          state.anaGray = loaded.gray;
-          setStatus(refs.anaStatus, "ok", "Imagem pronta para análise FFT.");
-        } catch (err) {
-          setStatus(refs.anaStatus, "error", "Falha ao carregar imagem de análise: " + err.message);
-        }
-      });
-
-      refs.encRunBtn.addEventListener("click", runEncryption);
-      refs.decRunBtn.addEventListener("click", runDecoding);
-      refs.anaRunBtn.addEventListener("click", runAnalysis);
+      refs.encRunBtn.addEventListener("click", runEncode);
+      refs.decRunBtn.addEventListener("click", runDecode);
 
       refs.encDownloadBtn.addEventListener("click", () => {
         downloadCanvas(refs.encPreviewCanvas, "encrypted_preview.png");
@@ -691,8 +530,7 @@
       refs.encExportJsonBtn.addEventListener("click", () => {
         if (!state.encState) return;
         const payload = {
-          mode: state.encState.mode,
-          seed: state.encState.seed,
+          cipher: "fixed-v1",
           n: state.encState.n,
           r: { re: Array.from(state.encState.channels.r.re), im: Array.from(state.encState.channels.r.im) },
           g: { re: Array.from(state.encState.channels.g.re), im: Array.from(state.encState.channels.g.im) },
@@ -713,7 +551,7 @@
         const file = ev.target.files && ev.target.files[0];
         if (!file) return;
 
-        // Mantem apenas um tipo de upload por vez na aba de decodificacao.
+        // Mantem apenas um tipo de upload por vez na aba de reconstrucao.
         refs.decFile.value = "";
         state.decRgbFallback = null;
 
@@ -731,14 +569,10 @@
               g: { re: new Float64Array(payload.g.re), im: new Float64Array(payload.g.im) },
               b: { re: new Float64Array(payload.b.re), im: new Float64Array(payload.b.im) }
             },
-            mode: payload.mode,
-            seed: String(payload.seed),
             n
           };
-          refs.decMode.value = payload.mode;
-          refs.decSeed.value = payload.seed;
 
-          // Renderiza preview da encriptada (IFFT dos coeficientes carregados).
+          // Renderiza preview da imagem codificada a partir dos coeficientes carregados.
           const prev = cloneCoeffChannels(state.encState.channels);
           ifft2D(prev.r.re, prev.r.im, n);
           ifft2D(prev.g.re, prev.g.im, n);
@@ -746,28 +580,18 @@
           renderRgb(refs.decEncryptedCanvas, { r: prev.r.re, g: prev.g.re, b: prev.b.re }, n, true);
 
           updateDecodeMemoryStatus();
-          updateMismatchWarning();
-          setStatus(refs.decStatus, "ok", "Coeficientes JSON carregados. Pronto para decodificar.");
+          setStatus(refs.decStatus, "ok", "Coeficientes JSON carregados. Pronto para reconstruir.");
         } catch (err) {
           setStatus(refs.decStatus, "error", "Erro ao carregar JSON: " + err.message);
         }
       });
 
       refs.decDownloadBtn.addEventListener("click", () => {
-        downloadCanvas(refs.decOutputCanvas, "decoded_result.png");
+        downloadCanvas(refs.decOutputCanvas, "reconstructed_result.png");
       });
 
       refs.goDecodeBtn.addEventListener("click", () => {
-        refs.decMode.value = refs.encMode.value;
-        refs.decSeed.value = refs.encSeed.value;
         activateTab("decode");
-        updateMismatchWarning();
-      });
-
-      refs.decMode.addEventListener("change", updateMismatchWarning);
-      refs.decSeed.addEventListener("input", updateMismatchWarning);
-      refs.anaBands.addEventListener("input", () => {
-        drawBandBars(refs.anaBandsCanvas, new Float64Array(getAnalysisBandCount()), "B");
       });
 
       updateDecodeMemoryStatus();
@@ -793,60 +617,34 @@
         setStatus(
           refs.decMemoryStatus,
           "ok",
-          "encState disponível em memória (lossless)."
+          "Estado em memória disponível (lossless)."
         );
       } else {
         setStatus(
           refs.decMemoryStatus,
           "idle",
-          "Sem encState em memória. Decodificação via arquivo terá pequena perda."
+          "Sem estado em memória. Reconstrução via arquivo terá pequena perda."
         );
       }
-      updateMismatchWarning();
     }
 
-    function updateMismatchWarning() {
-      if (!state.encState) {
-        refs.decMismatchWarning.style.display = "none";
-        refs.decMismatchWarning.textContent = "";
-        return;
-      }
-
-      const modeDiff = refs.decMode.value !== state.encState.mode;
-      const seedDiff = String(refs.decSeed.value) !== String(state.encState.seed);
-
-      if (modeDiff || seedDiff) {
-        refs.decMismatchWarning.style.display = "block";
-        refs.decMismatchWarning.textContent =
-          "Aviso: modo/chave diferentes da encriptação original. Resultado pode ficar incorreto.";
-      } else {
-        refs.decMismatchWarning.style.display = "none";
-        refs.decMismatchWarning.textContent = "";
-      }
-    }
-
-    async function runEncryption() {
+    async function runEncode() {
       if (!state.encRgb) {
-        setStatus(refs.encStatus, "error", "Envie uma imagem antes de encriptar.");
+        setStatus(refs.encStatus, "error", "Envie uma imagem antes de codificar.");
         return;
       }
 
-      setStatus(refs.encStatus, "working", "Executando FFT 2D e encriptação...");
+      setStatus(refs.encStatus, "working", "Executando FFT 2D e codificação...");
       refs.encRunBtn.disabled = true;
 
       try {
-        const mode = refs.encMode.value;
-        const seed = refs.encSeed.value;
-
         const encChannels = fftChannelsFromRgb(state.encRgb, FFT_N);
-        applyCipherMode(encChannels.r.re, encChannels.r.im, FFT_N, mode, seed, true);
-        applyCipherMode(encChannels.g.re, encChannels.g.im, FFT_N, mode, seed, true);
-        applyCipherMode(encChannels.b.re, encChannels.b.im, FFT_N, mode, seed, true);
+        applyDeterministicCipher(encChannels.r.re, encChannels.r.im, FFT_N, true);
+        applyDeterministicCipher(encChannels.g.re, encChannels.g.im, FFT_N, true);
+        applyDeterministicCipher(encChannels.b.re, encChannels.b.im, FFT_N, true);
 
         state.encState = {
           channels: cloneCoeffChannels(encChannels),
-          mode,
-          seed: String(seed),
           n: FFT_N
         };
 
@@ -861,33 +659,24 @@
           b: preview.b.re
         }, FFT_N, true);
 
-        const logBands = computeRadialBandsRgb(encChannels, FFT_N, RADIAL_BANDS, "logmag");
-        drawBandBars(refs.encBandsCanvas, logBands, "B");
-
-        refs.decMode.value = mode;
-        refs.decSeed.value = seed;
-
         refs.encDownloadBtn.disabled = false;
         refs.encExportJsonBtn.disabled = false;
         refs.goDecodeBtn.disabled = false;
 
         updateDecodeMemoryStatus();
-        setStatus(refs.encStatus, "ok", "Encriptação concluída. encState salvo em memória.");
+        setStatus(refs.encStatus, "ok", "Codificação concluída. Estado salvo em memória.");
       } catch (err) {
-        setStatus(refs.encStatus, "error", "Erro na encriptação: " + err.message);
+        setStatus(refs.encStatus, "error", "Erro na codificação: " + err.message);
       } finally {
         refs.encRunBtn.disabled = false;
       }
     }
 
-    async function runDecoding() {
-      setStatus(refs.decStatus, "working", "Executando decodificação via IFFT...");
+    async function runDecode() {
+      setStatus(refs.decStatus, "working", "Executando reconstrução via IFFT...");
       refs.decRunBtn.disabled = true;
 
       try {
-        const mode = refs.decMode.value;
-        const seed = refs.decSeed.value;
-
         let channels;
         let sourceType;
 
@@ -898,15 +687,15 @@
           channels = cloneCoeffChannels(state.encState.channels);
           sourceType = "mem";
 
-          // Mostra a versão encriptada usada para decodificação lossless.
+          // Mostra a versão codificada usada para reconstrução lossless.
           copyCanvas(refs.encPreviewCanvas, refs.decEncryptedCanvas);
         } else {
-          throw new Error("Sem encState e sem arquivo fallback para decodificar.");
+          throw new Error("Sem estado em memória e sem arquivo fallback para reconstruir.");
         }
 
-        applyCipherMode(channels.r.re, channels.r.im, FFT_N, mode, seed, false);
-        applyCipherMode(channels.g.re, channels.g.im, FFT_N, mode, seed, false);
-        applyCipherMode(channels.b.re, channels.b.im, FFT_N, mode, seed, false);
+        applyDeterministicCipher(channels.r.re, channels.r.im, FFT_N, false);
+        applyDeterministicCipher(channels.g.re, channels.g.im, FFT_N, false);
+        applyDeterministicCipher(channels.b.re, channels.b.im, FFT_N, false);
         ifft2D(channels.r.re, channels.r.im, FFT_N);
         ifft2D(channels.g.re, channels.g.im, FFT_N);
         ifft2D(channels.b.re, channels.b.im, FFT_N);
@@ -919,53 +708,14 @@
         refs.decDownloadBtn.disabled = false;
 
         if (sourceType === "mem") {
-          setStatus(refs.decStatus, "ok", "Decodificação lossless concluída usando encState.");
+          setStatus(refs.decStatus, "ok", "Reconstrução lossless concluída usando estado em memória.");
         } else {
-          setStatus(refs.decStatus, "ok", "Decodificação aproximada concluída via arquivo PNG/JPG.");
+          setStatus(refs.decStatus, "ok", "Reconstrução aproximada concluída via arquivo PNG/JPG.");
         }
-
-        updateMismatchWarning();
       } catch (err) {
-        setStatus(refs.decStatus, "error", "Erro na decodificação: " + err.message);
+        setStatus(refs.decStatus, "error", "Erro na reconstrução: " + err.message);
       } finally {
         refs.decRunBtn.disabled = false;
-      }
-    }
-
-    async function runAnalysis() {
-      if (!state.anaGray) {
-        setStatus(refs.anaStatus, "error", "Envie uma imagem antes de analisar.");
-        return;
-      }
-
-      setStatus(refs.anaStatus, "working", "Calculando FFT 2D, espectro e métricas...");
-      refs.anaRunBtn.disabled = true;
-
-      try {
-        const re = Float64Array.from(state.anaGray);
-        const im = new Float64Array(re.length);
-
-        fft2D(re, im, FFT_N, false);
-
-        drawSpectrumShifted(refs.anaSpectrumCanvas, re, im, FFT_N);
-
-        const dc = Math.hypot(re[0], im[0]);
-        const peak = computePeakFrequencyPercent(re, im, FFT_N);
-        const bandCount = getAnalysisBandCount();
-        const energyBands = computeRadialBands(re, im, FFT_N, bandCount, "energy");
-        const entropy = spectralEntropy(energyBands);
-
-        refs.metricDc.textContent = dc.toFixed(6);
-        refs.metricPeak.textContent = peak;
-        refs.metricEntropy.textContent = entropy.toFixed(6) + " bits";
-
-        drawBandBars(refs.anaBandsCanvas, energyBands, "B");
-
-        setStatus(refs.anaStatus, "ok", "Análise FFT concluída.");
-      } catch (err) {
-        setStatus(refs.anaStatus, "error", "Erro na análise: " + err.message);
-      } finally {
-        refs.anaRunBtn.disabled = false;
       }
     }
 
@@ -975,9 +725,8 @@
       ctx.clearRect(0, 0, size, size);
       ctx.drawImage(img, 0, 0, size, size);
       const imageData = ctx.getImageData(0, 0, size, size);
-      const gray = imageDataToGray(imageData.data);
       const rgb = imageDataToRgb(imageData.data);
-      return { gray, rgb };
+      return { rgb };
     }
 
     function loadImageFromFile(file) {
@@ -994,14 +743,6 @@
         };
         img.src = url;
       });
-    }
-
-    function imageDataToGray(data) {
-      const gray = new Float64Array(FFT_N * FFT_N);
-      for (let i = 0, p = 0; i < data.length; i += 4, p++) {
-        gray[p] = data[i] * 0.299 + data[i + 1] * 0.587 + data[i + 2] * 0.114;
-      }
-      return gray;
     }
 
     function imageDataToRgb(data) {
@@ -1057,136 +798,6 @@
       ctx.putImageData(img, 0, 0);
     }
 
-    function drawSpectrumShifted(canvas, re, im, n) {
-      const mag = new Float64Array(n * n);
-      let mn = Infinity;
-      let mx = -Infinity;
-
-      for (let y = 0; y < n; y++) {
-        for (let x = 0; x < n; x++) {
-          const sy = (y + n / 2) % n;
-          const sx = (x + n / 2) % n;
-          const idx = sy * n + sx;
-          const value = Math.log1p(Math.hypot(re[idx], im[idx]));
-          const out = y * n + x;
-          mag[out] = value;
-          if (value < mn) mn = value;
-          if (value > mx) mx = value;
-        }
-      }
-
-      const range = mx - mn || 1;
-      const ctx = canvas.getContext("2d", { willReadFrequently: true });
-      const img = ctx.createImageData(n, n);
-
-      for (let i = 0, p = 0; i < mag.length; i++, p += 4) {
-        const px = clamp(Math.round(((mag[i] - mn) / range) * 255), 0, 255);
-        img.data[p] = px;
-        img.data[p + 1] = px;
-        img.data[p + 2] = px;
-        img.data[p + 3] = 255;
-      }
-
-      ctx.putImageData(img, 0, 0);
-    }
-
-    function computePeakFrequencyPercent(re, im, n) {
-      let maxPower = -1;
-      let pkX = 0;
-      let pkY = 0;
-
-      for (let y = 0; y < n; y++) {
-        const fy = y <= n / 2 ? y : n - y;
-        for (let x = 0; x < n; x++) {
-          const fx = x <= n / 2 ? x : n - x;
-          if (fx === 0 && fy === 0) {
-            continue;
-          }
-          const idx = y * n + x;
-          const power = re[idx] * re[idx] + im[idx] * im[idx];
-          if (power > maxPower) {
-            maxPower = power;
-            pkX = fx;
-            pkY = fy;
-          }
-        }
-      }
-
-      const pct = (Math.sqrt(pkX * pkX + pkY * pkY) / n) * 100;
-      return pct.toFixed(1) + "%";
-    }
-
-    function spectralEntropy(bands) {
-      let total = 0;
-      for (let i = 0; i < bands.length; i++) total += bands[i];
-      if (total <= 0) return 0;
-
-      let h = 0;
-      for (let i = 0; i < bands.length; i++) {
-        const p = bands[i] / total;
-        if (p > 0) {
-          h -= p * Math.log2(p);
-        }
-      }
-      return h;
-    }
-
-    function getAnalysisBandCount() {
-      const raw = parseInt(refs.anaBands.value, 10);
-      if (!Number.isFinite(raw)) return 8;
-      return clamp(raw, 2, 64);
-    }
-
-    function computeRadialBands(re, im, n, bandCount, mode) {
-      const bands = new Float64Array(bandCount);
-      const maxR = Math.hypot(n / 2, n / 2);
-
-      for (let y = 0; y < n; y++) {
-        for (let x = 0; x < n; x++) {
-          const sy = (y + n / 2) % n;
-          const sx = (x + n / 2) % n;
-          const idx = sy * n + sx;
-          const dist = Math.hypot(x - n / 2, y - n / 2);
-          const b = Math.min(bandCount - 1, Math.floor((dist / maxR) * bandCount));
-
-          if (mode === "energy") {
-            bands[b] += re[idx] * re[idx] + im[idx] * im[idx];
-          } else {
-            bands[b] += Math.log1p(Math.hypot(re[idx], im[idx]));
-          }
-        }
-      }
-
-      return bands;
-    }
-
-    function computeRadialBandsRgb(channels, n, bandCount, mode) {
-      const bands = new Float64Array(bandCount);
-      const maxR = Math.hypot(n / 2, n / 2);
-
-      for (let y = 0; y < n; y++) {
-        for (let x = 0; x < n; x++) {
-          const sy = (y + n / 2) % n;
-          const sx = (x + n / 2) % n;
-          const idx = sy * n + sx;
-          const dist = Math.hypot(x - n / 2, y - n / 2);
-          const b = Math.min(bandCount - 1, Math.floor((dist / maxR) * bandCount));
-
-          const rMag = Math.hypot(channels.r.re[idx], channels.r.im[idx]);
-          const gMag = Math.hypot(channels.g.re[idx], channels.g.im[idx]);
-          const bMag = Math.hypot(channels.b.re[idx], channels.b.im[idx]);
-
-          if (mode === "energy") {
-            bands[b] += rMag * rMag + gMag * gMag + bMag * bMag;
-          } else {
-            bands[b] += Math.log1p((rMag + gMag + bMag) / 3);
-          }
-        }
-      }
-
-      return bands;
-    }
-
     function fftChannelsFromRgb(rgb, n) {
       const channels = {
         r: { re: Float64Array.from(rgb.r), im: new Float64Array(rgb.r.length) },
@@ -1223,154 +834,54 @@
       return Number.isFinite(v) ? v : 0;
     }
 
-    function drawBandBars(canvas, values, prefix) {
-      const ctx = canvas.getContext("2d");
-      const w = canvas.width;
-      const h = canvas.height;
-      ctx.clearRect(0, 0, w, h);
+    function applyDeterministicCipher(re, im, n, encrypting) {
+      const sh = Math.floor(n * 0.25);
+      const shiftedRe = new Float64Array(re.length);
+      const shiftedIm = new Float64Array(im.length);
 
-      ctx.fillStyle = "#0b1015";
-      ctx.fillRect(0, 0, w, h);
-
-      let mx = 0;
-      for (let i = 0; i < values.length; i++) {
-        if (values[i] > mx) mx = values[i];
-      }
-      if (mx <= 0) mx = 1;
-
-      const pad = 36;
-      const chartW = w - pad * 2;
-      const chartH = h - pad * 2;
-      const barW = chartW / values.length;
-
-      ctx.strokeStyle = "#2b3442";
-      ctx.lineWidth = 1;
-      for (let i = 0; i <= 4; i++) {
-        const y = pad + (chartH / 4) * i;
-        ctx.beginPath();
-        ctx.moveTo(pad, y);
-        ctx.lineTo(w - pad, y);
-        ctx.stroke();
-      }
-
-      for (let i = 0; i < values.length; i++) {
-        const v = values[i] / mx;
-        const bh = Math.max(1, v * chartH);
-        const x = pad + i * barW + 4;
-        const y = h - pad - bh;
-
-        ctx.fillStyle = "#d0d7de";
-        ctx.fillRect(x, y, Math.max(6, barW - 8), bh);
-
-        ctx.fillStyle = "#96a2b0";
-        ctx.font = "16px Cascadia Mono, Consolas, monospace";
-        ctx.fillText(prefix + i, x, h - 10);
-      }
-    }
-
-    function applyCipherMode(re, im, n, mode, seed, encrypting) {
-      if (mode === "phase") {
-        const rng = mkRng(seed);
-        for (let i = 0; i < re.length; i++) {
-          const mag = Math.hypot(re[i], im[i]);
-          const phi = Math.atan2(im[i], re[i]);
-          const delta = rng() * Math.PI * 2;
-          const outPhi = encrypting ? phi + delta : phi - delta;
-          re[i] = mag * Math.cos(outPhi);
-          im[i] = mag * Math.sin(outPhi);
-        }
-        return;
-      }
-
-      if (mode === "scramble") {
-        const len = re.length;
-        const rng = mkRng(seed);
-        const perm = buildPermutation(len, rng);
-
-        if (encrypting) {
-          const outRe = new Float64Array(len);
-          const outIm = new Float64Array(len);
-          for (let i = 0; i < len; i++) {
-            const src = perm[i];
-            outRe[i] = re[src];
-            outIm[i] = im[src];
-          }
-          re.set(outRe);
-          im.set(outIm);
-        } else {
-          const inv = new Uint32Array(len);
-          for (let i = 0; i < len; i++) {
-            inv[perm[i]] = i;
-          }
-          const outRe = new Float64Array(len);
-          const outIm = new Float64Array(len);
-          for (let i = 0; i < len; i++) {
-            outRe[i] = re[inv[i]];
-            outIm[i] = im[inv[i]];
-          }
-          re.set(outRe);
-          im.set(outIm);
-        }
-        return;
-      }
-
-      if (mode === "shift") {
-        const sh = Math.floor(n * 0.25);
-        const outRe = new Float64Array(re.length);
-        const outIm = new Float64Array(im.length);
-
-        if (encrypting) {
-          for (let y = 0; y < n; y++) {
-            for (let x = 0; x < n; x++) {
-              const src = y * n + x;
-              const ny = (y + sh) % n;
-              const nx = (x + sh) % n;
-              const dst = ny * n + nx;
-              outRe[dst] = re[src];
-              outIm[dst] = im[src];
-            }
-          }
-        } else {
-          for (let y = 0; y < n; y++) {
-            for (let x = 0; x < n; x++) {
-              const ny = (y + sh) % n;
-              const nx = (x + sh) % n;
-              const src = ny * n + nx;
-              const dst = y * n + x;
-              outRe[dst] = re[src];
-              outIm[dst] = im[src];
-            }
+      if (encrypting) {
+        for (let y = 0; y < n; y++) {
+          for (let x = 0; x < n; x++) {
+            const src = y * n + x;
+            const ny = (y + sh) % n;
+            const nx = (x + sh) % n;
+            const dst = ny * n + nx;
+            shiftedRe[dst] = re[src];
+            shiftedIm[dst] = im[src];
           }
         }
-
-        re.set(outRe);
-        im.set(outIm);
-        return;
-      }
-
-      if (mode === "negate") {
-        const rng = mkRng(seed);
-        for (let i = 0; i < im.length; i++) {
-          if (rng() > 0.5) {
-            im[i] = -im[i];
+      } else {
+        for (let y = 0; y < n; y++) {
+          for (let x = 0; x < n; x++) {
+            const ny = (y + sh) % n;
+            const nx = (x + sh) % n;
+            const src = ny * n + nx;
+            const dst = y * n + x;
+            shiftedRe[dst] = re[src];
+            shiftedIm[dst] = im[src];
           }
         }
-        return;
       }
 
-      throw new Error("modo inválido: " + mode);
-    }
+      const twopi = Math.PI * 2;
+      for (let y = 0; y < n; y++) {
+        for (let x = 0; x < n; x++) {
+          const idx = y * n + x;
+          const theta = (((x * 3 + y * 5) % 32) / 32) * twopi;
+          const c = Math.cos(theta);
+          const s = Math.sin(theta);
+          const a = shiftedRe[idx];
+          const b = shiftedIm[idx];
 
-    function buildPermutation(len, rng) {
-      const perm = new Uint32Array(len);
-      for (let i = 0; i < len; i++) perm[i] = i;
-      for (let i = len - 1; i >= 1; i--) {
-        const j = Math.floor(rng() * (i + 1));
-        const tmp = perm[i];
-        perm[i] = perm[j];
-        perm[j] = tmp;
+          if (encrypting) {
+            re[idx] = a * c - b * s;
+            im[idx] = a * s + b * c;
+          } else {
+            re[idx] = a * c + b * s;
+            im[idx] = -a * s + b * c;
+          }
+        }
       }
-      return perm;
     }
 
     function fft2D(re, im, n, invert) {
@@ -1475,16 +986,6 @@
           im[i] /= n;
         }
       }
-    }
-
-    function mkRng(seed) {
-      let s = (Math.abs(parseInt(seed, 10)) || 1) >>> 0;
-      return () => {
-        s ^= s << 13;
-        s ^= s >>> 17;
-        s ^= s << 5;
-        return (s >>> 0) / 4294967296;
-      };
     }
 
     function nextPow2(v) {
